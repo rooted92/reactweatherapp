@@ -1,12 +1,12 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const CurrentWeatherComponent = () => {
+const AddCityButtonComponent = () => {
     return(
         <>
-            
+        
         </>
     );
 }
 
-export default CurrentWeatherComponent;
+export default AddCityButtonComponent;
