@@ -1,7 +1,7 @@
 // Pedro Castaneda
 // 03-24-2023
 // Description: We are to rebuild our weather application we made with vanilla JS with React.
-// Peer Review by: 
+// Peer Review By Kennth Fujimura “Solid work. Clearly not finished yet, but there’s the backbones of a good site here. The search bar providing multiple results works really well, I’m honestly envious. Glad we caught the enviornments.js not being uploaded to azure/github. The code is clean and easy to follow. The background images and icons load well. I would just recommend in the future, bring some of the functions out of the main page into their own .js files, and then import them, so you can keep your code on the main page a little smaller and easier to follow. I look forward to seeing it after you’ve cleaned it up further!”
 
 # Getting Started with Create React App
 
