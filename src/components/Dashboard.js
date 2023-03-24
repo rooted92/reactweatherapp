@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, ListGroup } from 'react-bootstrap';
 import objects from '../environments.js';
 import FiveDayComponent from "./FiveDayComponent.js";
+import FavoritesButton from './FavoritesButtonComponent.js';
+import AddCityButton from "./AddCityButtonComponent.js";
 import '../App.css';
 
 import ThunderstormIcon from '../assets/images/lightningCloudIcon.png';
@@ -222,7 +224,7 @@ const Dashboard = () => {
                                 <h1 className="titleText">the.weather</h1>
                             </Col>
                             <Col xs={6} md={4} className='d-flex flex-row justify-content-center'>
-                                favorites button here
+                                <FavoritesButton />
                             </Col>
                         </Row>
                         {/* </Container> */}
@@ -268,7 +270,7 @@ const Dashboard = () => {
                                         <p className="m-0 currentlyTxt">Currently</p>
                                     </Col>
                                     <Col>
-                                        Add city to favorites button
+                                        <AddCityButton />
                                     </Col>
                                 </Row>
                                 <Row>

@@ -1,3 +1,8 @@
+// Pedro Castaneda
+// 03-24-2023
+// Description: We are to rebuild our weather application we made with vanilla JS with React.
+// Peer Review by: 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

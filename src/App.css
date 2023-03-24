@@ -89,6 +89,9 @@ body {
 
 .listGroup {
   width: 30rem;
+  height: auto;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
 .titleText {
