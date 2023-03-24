@@ -1,38 +1,107 @@
-.App {
-  text-align: center;
+.rightColumn {
+  background-color: rgba(255, 255, 255, 0.51);
+  color: rgba(10, 17, 40, 1);
+  height: 100vh;
+  
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+body {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.thunderstorm {
+  background-image: url('./assets/images/thunder.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.drizzle {
+  background-image: url('./assets/images/drizzle.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.rain {
+  background-image: url('./assets/images/rainyDay.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.snow {
+  background-image: url('./assets/images/snow.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.atmosphere {
+  background-image: url('./assets/images/fog.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.clear {
+  background-image: url('./assets/images/sunnyDay.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.clouds {
+  background-image: url('./assets/images/cloudy.jpg');
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.fiveDayIcon {
+  max-width: 2.2rem;
+  height: auto;
+}
+
+.currentDayIcon {
+  max-width: 3.2rem;
+  height: auto;
+}
+
+.currentTemp {
+  font-size: 8rem;
+}
+
+.currentlyTxt {
+  font-size: 2rem;
+}
+
+.cityTxt {
+  font-size: 3rem;
+}
+
+.listGroup {
+  width: 30rem;
+}
+
+.titleText {
+  color: rgba(129, 244, 153, 1);
+}
+
+.searchBar {
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  border-bottom: solid 2px rgba(10, 17, 40, 1);
+}
+
+.searchButton {
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
 }

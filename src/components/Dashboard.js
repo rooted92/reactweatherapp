@@ -1,129 +1,381 @@
 import React, { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup } from 'react-bootstrap';
 import objects from '../environments.js';
+import FiveDayComponent from "./FiveDayComponent.js";
+import '../App.css';
+
+import ThunderstormIcon from '../assets/images/lightningCloudIcon.png';
+import DrizzleIcon from '../assets/images/rainCloudIcon.png';
+import RainIcon from '../assets/images/rainCloudIcon.png';
+import SnowIcon from '../assets/images/snowCloudIcon.png';
+import AtmosphereIcon from '../assets/images/fogIcon.png';
+import ClearIcon from '../assets/images/sunIcon.png';
+import CloudsIcon from '../assets/images/cloudIcon.png';
+import Sunrise from '../assets/images/sunrise.png';
+import Sunset from '../assets/images/sunset.png';
 
 const Dashboard = () => {
 
     const apiKey = "&appid=" + objects.prod.apiKey;
+    const body = document.body;
 
-    const GetCurrentWeather = async (apiKey, city) => {
+    const [bgImage, setBgImage] = useState('');
+    const [weatherIcons, setWeatherIcons] = useState({
+        "Thunderstorm": ThunderstormIcon,
+        "Drizzle": DrizzleIcon,
+        "Rain": RainIcon,
+        "Snow": SnowIcon,
+        "Atmosphere": AtmosphereIcon,
+        "Clear": ClearIcon,
+        "Clouds": CloudsIcon,
+        "Sunrise": Sunrise,
+        "Sunset": Sunset
+    });
+    const [cityInput, setCityInput] = useState('');
+    const [cityArray, setCityArray] = useState([]);
+    const [isArray, setIsArray] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [currentTemp, setCurrentTemp] = useState(0);
+    const [icon, setIcon] = useState('');
+    const [description, setDescription] = useState('');
+    const [cityName, setCityName] = useState('');
+    const [countryName, setCountryName] = useState('');
+
+    const [time, setTime] = useState('');
+    const [date, setDate] = useState('');
+
+    const [sunrise, setSunrise] = useState('');
+    const [sunset, setSunset] = useState('');
+
+    const [userPosLat, setUserPosLat] = useState('');
+    const [userPosLon, setUserPosLon] = useState('');
+
+    const [dayOneWeekday, setDayOneWeekday] = useState('');
+    const [dayTwoWeekday, setDayTwoWeekday] = useState('');
+    const [dayThreeWeekday, setDayThreeWeekday] = useState('');
+    const [dayFourWeekday, setDayFourWeekday] = useState('');
+    const [dayFiveWeekday, setDayFiveWeekday] = useState('');
+
+    const [dayOneIcon, setDayOneIcon] = useState('');
+    const [dayTwoIcon, setDayTwoIcon] = useState('');
+    const [dayThreeIcon, setDayThreeIcon] = useState('');
+    const [dayFourIcon, setDayFourIcon] = useState('');
+    const [dayFiveIcon, setDayFiveIcon] = useState('');
+
+    const [dayOneHighLow, setDayOneHighLow] = useState('');
+    const [dayTwoHighLow, setDayTwoHighLow] = useState('');
+    const [dayThreeHighLow, setDayThreeHighLow] = useState('');
+    const [dayFourHighLow, setDayFourHighLow] = useState('');
+    const [dayFiveHighLow, setDayFiveHighLow] = useState('');
+
+    const GetAvailableCitiesToSearch = async (apiKey, city) => {
         const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5${apiKey}`);
         const data = await response.json();
         console.log(data);
-        console.log(objects.stateCodes);
+        console.log(Array.isArray(data));
+        setCityArray([]);
+        if (city === '') {
+            alert('Please enter city name');
+        }
+        else if (!Array.isArray(data) || data.length === 0) {
+            setErrorMessage('No results found');
+            setIsArray(false);
+        }
+        else if (Array.isArray(data)) {
+            setIsArray(true);
+            setCityArray(data);
+        }
+    }
+
+    const GetCurrentWeatherForSelectedCity = async (apiKey, lat, lon) => {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial${apiKey}`);
+        const data = await response.json();
+        console.log(data);
+        setCurrentTemp(Math.floor(data.main.temp));
+        let dateTime = new Date(data.dt * 1000);
+        console.log(dateTime)
+        let hours = dateTime.getHours();
+        let minutes = dateTime.getMinutes();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        setTime(`${hours}:${minutes}${ampm}`);
+        let dateLong = dateTime.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        setDate(dateLong);
+        console.log(data.city);
+        let sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        let sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        console.log(sunriseTime, sunsetTime);
+        setSunrise(sunriseTime);
+        setSunset(sunsetTime);
+        setCityName(data.name);
+        setCountryName(data.sys.country);
+        setDescription(data.weather[0].description);
+        if (data.weather[0].main === 'Atmosphere') {
+            setIcon(weatherIcons.Atmosphere);
+            setBgImage('atmosphere')
+        }
+        else if (data.weather[0].main === 'Clear') {
+            setIcon(weatherIcons.Clear);
+            setBgImage('clear');
+        }
+        else if (data.weather[0].main === 'Clouds') {
+            setIcon(weatherIcons.Clouds);
+            setBgImage('clouds');
+        }
+        else if (data.weather[0].main === 'Drizzle') {
+            setIcon(weatherIcons.Drizzle);
+            setBgImage('drizzle');
+        }
+        else if (data.weather[0].main === 'Rain') {
+            setIcon(weatherIcons.Rain);
+            setBgImage('rain');
+        }
+        else if (data.weather[0].main === 'Snow') {
+            setIcon(weatherIcons.Snow);
+            setBgImage('snow');
+        }
+        else if (data.weather[0].main === 'Thunderstorm') {
+            setIcon(weatherIcons.Thunderstorm);
+            setBgImage('thunderstorm');
+        }
+    }
+
+    const GetFiveDayForecast = async (apiKey, lat, lon) => {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}${apiKey}&units=imperial`);
+        const data = await response.json();
+        console.log(data);
+        let keys = Object.keys(weatherIcons);
+        console.log(keys);
+        data.list.forEach((item, index) => {
+
+            if (index === 3) {
+                let dtTxt = item.dt_txt;
+                let date = new Date(dtTxt);
+                let dayOfWeek = date.toLocaleString('default', { weekday: 'long' });
+                setDayOneWeekday(dayOfWeek);
+                setDayOneHighLow(`H:${Math.ceil(item.main.temp_max.toString())} L:${Math.floor(item.main.temp_min.toString())}`);
+                if (keys.includes(item.weather[0].main)) {
+                    setDayOneIcon(weatherIcons[item.weather[0].main]);
+                }
+            }
+            else if (index === 11) {
+                let dtTxt = item.dt_txt;
+                let date = new Date(dtTxt);
+                let dayOfWeek = date.toLocaleString('default', { weekday: 'long' });
+                setDayTwoWeekday(dayOfWeek);
+                setDayTwoHighLow(`H:${Math.ceil(item.main.temp_max.toString())} L:${Math.floor(item.main.temp_min.toString())}`);
+                if (keys.includes(item.weather[0].main)) {
+                    setDayTwoIcon(weatherIcons[item.weather[0].main]);
+                    console.log(dayTwoIcon)
+                }
+            }
+            else if (index === 19) {
+                let dtTxt = item.dt_txt;
+                let date = new Date(dtTxt);
+                let dayOfWeek = date.toLocaleString('default', { weekday: 'long' });
+                setDayThreeWeekday(dayOfWeek);
+                setDayThreeHighLow(`H:${Math.ceil(item.main.temp_max.toString())} L:${Math.floor(item.main.temp_min.toString())}`);
+                if (keys.includes(item.weather[0].main)) {
+                    setDayThreeIcon(weatherIcons[item.weather[0].main]);
+                }
+            }
+            else if (index === 27) {
+                let dtTxt = item.dt_txt;
+                let date = new Date(dtTxt);
+                let dayOfWeek = date.toLocaleString('default', { weekday: 'long' });
+                setDayFourWeekday(dayOfWeek);
+                setDayFourHighLow(`H:${Math.ceil(item.main.temp_max.toString())} L:${Math.floor(item.main.temp_min.toString())}`);
+                if (keys.includes(item.weather[0].main)) {
+                    setDayFourIcon(weatherIcons[item.weather[0].main]);
+                }
+            }
+            else if (index === 35) {
+                let dtTxt = item.dt_txt;
+                let date = new Date(dtTxt);
+                let dayOfWeek = date.toLocaleString('default', { weekday: 'long' });
+                setDayFiveWeekday(dayOfWeek);
+                setDayFiveHighLow(`H:${Math.ceil(item.main.temp_max.toString())} L:${Math.floor(item.main.temp_min.toString())}`);
+                if (keys.includes(item.weather[0].main)) {
+                    setDayFiveIcon(weatherIcons[item.weather[0].main]);
+                }
+            }
+        })
     }
 
     useEffect(() => {
-        GetCurrentWeather(apiKey, 'Healdsburg');
-        console.log(apiKey);
-    });
+        //basic skeleton for geolocation to work (getcurrentposition)
+        
+    }, []);
+
 
     return (
-        <>
-            {/* Header/Navigation Section */}
-            <Container>
-                <Row>
-                    <Col xs={6} md={4}>
-                        <h1>the.weather</h1>
-                    </Col>
-                    <Col xs={6} md={4}>
-                        favorites button here
-                    </Col>
-                    <Col xs={12} md={4}>
-                        search bar here
-                    </Col>
-                </Row>
-            </Container>
-            {/* Five Day Forecast Section */}
-            <Container>
-                <Row>
-                    {/* dummy column for space */}
-                    <Col>
-                    </Col>
-                    <Col>
-                        <Row>
-                            <Col>
-                                5 Day Forecast
+        <div className={bgImage}>
+            <Container className="mainContainer">
+                <Row className="d-flex justify-content-between">
+                    <Col className="col-7 pt-3">
+                        {/* <Container> */}
+                        <Row className="d-flex justify-content-between">
+                            <Col xs={6} md={4}>
+                                <h1 className="titleText">the.weather</h1>
+                            </Col>
+                            <Col xs={6} md={4} className='d-flex flex-row justify-content-center'>
+                                favorites button here
                             </Col>
                         </Row>
+                        {/* </Container> */}
+                        {/* <Container> */}
                         <Row>
                             <Col>
-                                Day 1
-                            </Col>
-                            <Col>
-                                Day 2
-                            </Col>
-                            <Col>
-                                Day 3
-                            </Col>
-                            <Col>
-                                Day 4
-                            </Col>
-                            <Col>
-                                Day 5
+                                {
+                                    isArray ? <h3>Which city are you looking for?</h3> : errorMessage
+                                }
+                                <ListGroup className="listGroup">
+                                    {
+                                        cityArray.map((item, index) => {
+                                            // let uid = new Date().getTime().toString(36);
+                                            // console.log(uid);
+                                            return (
+                                                <div key={index}>
+                                                    {
+                                                        isArray
+                                                            ?
+                                                            <ListGroup.Item>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        GetCurrentWeatherForSelectedCity(apiKey, item.lat, item.lon);
+                                                                        GetFiveDayForecast(apiKey, item.lat, item.lon);
+                                                                    }}
+                                                                    className="btn">{item.name}, {item.state} {item.country}</button>
+                                                            </ListGroup.Item>
+                                                            : { errorMessage }
+                                                    }
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </ListGroup>
                             </Col>
                         </Row>
-                    </Col>
-                </Row>
-            </Container>
-            {/* Date and Time Display */}
-            <Container>
-                <Row>
-                    {/* dummy column for space */}
-                    <Col>
-                    </Col>
-                    {/* Sift through the api and see what data you can place in this column(s) below */}
-                    <Col>
+                        {/* </Container> */}
+                        {/* <Container> */}
                         <Row>
-                            <Col xs={12}>
-                                Find data to fill
-                            </Col>
-                            <Col xs={12}>
-                                Find data to fill
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-            </Container>
-            <Container>
-                <Row>
-                    <Col>
-                        <Row>
-                            <Col>
-                                <p>Currently</p>
-                            </Col>
-                            <Col>
-                                Add city to favorites button
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <p>98deg</p>
-                            </Col>
                             <Col>
                                 <Row>
                                     <Col>
-                                        Santa Rosa, CA
+                                        <p className="m-0 currentlyTxt">Currently</p>
+                                    </Col>
+                                    <Col>
+                                        Add city to favorites button
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col xs={6}>
-                                        (ICON) sunny
+                                    <Col className="d-flex flex-column align-self-start m-0">
+                                        <p className="currentTemp m-0">{currentTemp}<sup>&deg;F</sup></p>
                                     </Col>
-                                    <Col xs={6}>
-                                        <p>time</p>
-                                        <p>date</p>
+                                    <Col>
+                                        <Row>
+                                            <Col>
+                                                <p className="cityTxt">{cityName}, {countryName}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={4}>
+                                                <img className="currentDayIcon" src={icon} alt=''></img>
+                                                <p>{description}</p>
+                                            </Col>
+                                            <Col xs={5}>
+                                                <p className="m-0">{time}</p>
+                                                <p className="m-0">{date}</p>
+                                            </Col>
+
+                                        </Row>
                                     </Col>
                                 </Row>
                             </Col>
                         </Row>
+                        {/* </Container> */}
                     </Col>
-                    {/* dummy column for space */}
-                    <Col></Col>
+                    <Col className="col-5 rightColumn">
+                        <Row className="mt-3">
+                            <Col className="d-flex flex-row justify-content-end">
+                                <input
+                                    className="searchBar"
+                                    type='search'
+                                    onChange={(e) => {
+                                        setCityInput(e.target.value);
+                                    }}
+
+                                    onKeyDown={
+                                        e => {
+                                            if (e.key === 'Enter') GetAvailableCitiesToSearch(apiKey, cityInput);
+                                        }}
+                                    placeholder="Enter city" ></input>
+                                <button
+                                    className="searchButton"
+                                    onClick={() => {
+                                        GetAvailableCitiesToSearch(apiKey, cityInput);
+                                    }}>search</button>
+                            </Col>
+                        </Row>
+                        <Row className="mt-5">
+                            <Col>
+                                <p style={{ fontSize: '2.25rem' }}>5 Day Forecast</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <FiveDayComponent
+                                    dayOfWeek={dayOneWeekday}
+                                    weatherIcon={dayOneIcon}
+                                    highLowTemps={dayOneHighLow}
+                                />
+                            </Col>
+                            <Col>
+                                <FiveDayComponent
+                                    dayOfWeek={dayTwoWeekday}
+                                    weatherIcon={dayTwoIcon}
+                                    highLowTemps={dayTwoHighLow}
+                                />
+                            </Col>
+                            <Col>
+                                <FiveDayComponent
+                                    dayOfWeek={dayThreeWeekday}
+                                    weatherIcon={dayThreeIcon}
+                                    highLowTemps={dayThreeHighLow}
+                                />
+                            </Col>
+                            <Col>
+                                <FiveDayComponent
+                                    dayOfWeek={dayFourWeekday}
+                                    weatherIcon={dayFourIcon}
+                                    highLowTemps={dayFourHighLow}
+                                />
+                            </Col>
+                            <Col>
+                                <FiveDayComponent
+                                    dayOfWeek={dayFiveWeekday}
+                                    weatherIcon={dayFiveIcon}
+                                    highLowTemps={dayFiveHighLow}
+                                />
+                            </Col>
+                        </Row>
+                        <Row className="mt-5">
+                            <Col xs={6} className='d-flex flex-column align-items-center'>
+                                <img src={weatherIcons.Sunrise} alt='sunrise icon'></img>
+                                <p>Sunrise: {sunrise}</p>
+                            </Col>
+                            <Col xs={6} className='d-flex flex-column align-items-center'>
+                                <img src={weatherIcons.Sunset} alt='sunset icon'></img>
+                                <p>Sunset: {sunset}</p>
+                            </Col>
+                        </Row>
+                    </Col>
                 </Row>
             </Container>
-        </>
+        </div>
     );
 }
 
