@@ -9,10 +9,10 @@ import Dashboard from './components/Dashboard';
 
 function App() {
   return (
-    <>
+    <div>
       {/* <div className='opaqueBg'></div> */}
       <Dashboard />
-    </>
+    </div>
   );
 }
 

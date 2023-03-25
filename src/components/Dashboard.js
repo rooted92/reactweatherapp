@@ -20,7 +20,6 @@ import Sunset from '../assets/images/sunset.png';
 const Dashboard = () => {
 
     const apiKey = "&appid=" + objects.prod.apiKey;
-    const body = document.body;
 
     const [bgImage, setBgImage] = useState('');
     const [weatherIcons, setWeatherIcons] = useState({
@@ -50,8 +49,8 @@ const Dashboard = () => {
     const [sunrise, setSunrise] = useState('');
     const [sunset, setSunset] = useState('');
 
-    const [userPosLat, setUserPosLat] = useState('');
-    const [userPosLon, setUserPosLon] = useState('');
+    const [userPosLat, setUserPosLat] = useState(null);
+    const [userPosLon, setUserPosLon] = useState(null);
 
     const [dayOneWeekday, setDayOneWeekday] = useState('');
     const [dayTwoWeekday, setDayTwoWeekday] = useState('');
@@ -71,7 +70,32 @@ const Dashboard = () => {
     const [dayFourHighLow, setDayFourHighLow] = useState('');
     const [dayFiveHighLow, setDayFiveHighLow] = useState('');
 
+    const geolocationAPI = navigator.geolocation;
+
+    const GetUserCoordinates = () => {
+        if (!geolocationAPI) {
+            setErrorMessage('Geolocation is not available in your browser!');
+        } else {
+            geolocationAPI.getCurrentPosition((position) => {
+                // destructuring object
+                const { coords } = position;
+                setUserPosLat(coords.latitude);
+                setUserPosLon(coords.longitude);
+                GetCurrentWeatherForSelectedCity(apiKey, userPosLat, userPosLon);
+                GetFiveDayForecast(apiKey, userPosLat, userPosLon);
+            }, (error) => {
+                setErrorMessage(error);
+                console.error(error);
+            })
+        }
+    }
+
     const GetAvailableCitiesToSearch = async (apiKey, city) => {
+        if (!city) {
+            setErrorMessage('Please enter a city name!');
+            return;
+        }
+
         const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5${apiKey}`);
         const data = await response.json();
         console.log(data);
@@ -151,6 +175,8 @@ const Dashboard = () => {
         console.log(data);
         let keys = Object.keys(weatherIcons);
         console.log(keys);
+        console.log(lat, lon);
+        console.log(typeof lat);
         data.list.forEach((item, index) => {
 
             if (index === 3) {
@@ -209,8 +235,9 @@ const Dashboard = () => {
 
     useEffect(() => {
         //basic skeleton for geolocation to work (getcurrentposition)
-        
-    }, []);
+        GetUserCoordinates();
+
+    }, [userPosLat, userPosLon]);
 
 
     return (
@@ -365,13 +392,17 @@ const Dashboard = () => {
                             </Col>
                         </Row>
                         <Row className="mt-5">
-                            <Col xs={6} className='d-flex flex-column align-items-center'>
-                                <img src={weatherIcons.Sunrise} alt='sunrise icon'></img>
-                                <p>Sunrise: {sunrise}</p>
+                            <Col xs={6} className='d-flex flex-row justify-content-center'>
+                                <div className="sunriseBox d-flex flex-column align-items-center">
+                                    <img src={weatherIcons.Sunrise} alt='sunrise icon'></img>
+                                    <p>Sunrise: {sunrise}</p>
+                                </div>
                             </Col>
-                            <Col xs={6} className='d-flex flex-column align-items-center'>
-                                <img src={weatherIcons.Sunset} alt='sunset icon'></img>
-                                <p>Sunset: {sunset}</p>
+                            <Col xs={6} className='d-flex flex-row justify-content-center'>
+                                <div className="sunsetBox d-flex flex-column align-items-center">
+                                    <img src={weatherIcons.Sunset} alt='sunset icon'></img>
+                                    <p>Sunset: {sunset}</p>
+                                </div>
                             </Col>
                         </Row>
                     </Col>
