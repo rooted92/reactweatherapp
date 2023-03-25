@@ -36,6 +36,7 @@ const Dashboard = () => {
     const [cityInput, setCityInput] = useState('');
     const [cityArray, setCityArray] = useState([]);
     const [isArray, setIsArray] = useState(false);
+    const [isCityPicked, setIsCityPicked] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [currentTemp, setCurrentTemp] = useState(0);
     const [icon, setIcon] = useState('');
@@ -264,22 +265,22 @@ const Dashboard = () => {
                                 <ListGroup className="listGroup">
                                     {
                                         cityArray.map((item, index) => {
-                                            // let uid = new Date().getTime().toString(36);
-                                            // console.log(uid);
                                             return (
                                                 <div key={index}>
                                                     {
-                                                        isArray
+                                                        isCityPicked
                                                             ?
-                                                            <ListGroup.Item>
+                                                            errorMessage
+                                                            :
+                                                            <ListGroup.Item className="listItem">
                                                                 <button
                                                                     onClick={() => {
                                                                         GetCurrentWeatherForSelectedCity(apiKey, item.lat, item.lon);
                                                                         GetFiveDayForecast(apiKey, item.lat, item.lon);
+                                                                        setIsCityPicked(!true);
                                                                     }}
                                                                     className="btn">{item.name}, {item.state} {item.country}</button>
                                                             </ListGroup.Item>
-                                                            : { errorMessage }
                                                     }
                                                 </div>
                                             )
@@ -290,36 +291,27 @@ const Dashboard = () => {
                         </Row>
                         {/* </Container> */}
                         {/* <Container> */}
-                        <Row>
+                        <Row className="mt-5">
                             <Col>
                                 <Row>
-                                    <Col>
+                                    <Col xs={'4'}>
                                         <p className="m-0 currentlyTxt">Currently</p>
+                                        <p className="currentTemp m-0">{currentTemp}<sup className="letterF">&deg;F</sup></p>
                                     </Col>
-                                    <Col>
+                                    <Col xs={'8'}>
                                         <AddCityButton />
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col className="d-flex flex-column align-self-start m-0">
-                                        <p className="currentTemp m-0">{currentTemp}<sup>&deg;F</sup></p>
-                                    </Col>
-                                    <Col>
+                                        <p className="cityTxt">{cityName}, {countryName}</p>
                                         <Row>
-                                            <Col>
-                                                <p className="cityTxt">{cityName}, {countryName}</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={4}>
+                                            <Col className="col-2 p-0 d-flex justify-content-center">
                                                 <img className="currentDayIcon" src={icon} alt=''></img>
-                                                <p>{description}</p>
                                             </Col>
-                                            <Col xs={5}>
+                                            <Col className="col-auto p-0 text-start">
+                                                <p className="m-0">{description}</p>
+                                            </Col>
+                                            <Col className="col-auto p-0 text-end">
                                                 <p className="m-0">{time}</p>
                                                 <p className="m-0">{date}</p>
                                             </Col>
-
                                         </Row>
                                     </Col>
                                 </Row>
