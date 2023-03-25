@@ -44,6 +44,8 @@ const Dashboard = () => {
     const [cityName, setCityName] = useState('');
     const [countryName, setCountryName] = useState('');
 
+    
+
     const [time, setTime] = useState('');
     const [date, setDate] = useState('');
 
@@ -251,7 +253,7 @@ const Dashboard = () => {
                             <Col xs={6} md={4}>
                                 <h1 className="titleText">the.weather</h1>
                             </Col>
-                            <Col xs={6} md={4} className='d-flex flex-row justify-content-center'>
+                            <Col xs={6} md={4} className='d-flex flex-row justify-content-center align-self-start'>
                                 <FavoritesButton />
                             </Col>
                         </Row>
@@ -299,7 +301,9 @@ const Dashboard = () => {
                                         <p className="currentTemp m-0">{currentTemp}<sup className="letterF">&deg;F</sup></p>
                                     </Col>
                                     <Col xs={'8'}>
-                                        <AddCityButton />
+                                        <AddCityButton
+                                        location={`${cityName} ${countryName}`}
+                                        />
                                         <p className="cityTxt">{cityName}, {countryName}</p>
                                         <Row>
                                             <Col className="col-2 p-0 d-flex justify-content-center">
